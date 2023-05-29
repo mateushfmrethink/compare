@@ -49,16 +49,16 @@ const formatContent = (
         const isTitle = key.startsWith('articleTitle')
 
         if(!articles[`articleTitle${articleId}`]){
-          articles[`articleTitle-${articleId}`] = {
+          articles[`articleTitle${articleId}`] = {
             articleTitle: '',
             articleTextContent: []
           }
         }
 
         if(isTitle){
-          articles[`articleTitle-${articleId}`].articleTitle = value
+          articles[`articleTitle${articleId}`].articleTitle = value
         }else{
-          articles[`articleTitle-${articleId}`].articleTextContent.push(value)
+          articles[`articleTitle${articleId}`].articleTextContent.push(value)
         }
 
       } else if (key.startsWith('termsOfUse')) {
