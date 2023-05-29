@@ -45,10 +45,10 @@ const formatContent = (
         key.startsWith('articleTitle') ||
         key.startsWith('articleTextContent')
       ) {
-        const articleId = key.match(/-\d+/)?.[0]?.slice(1)
+        const articleId = key.match(/-\d+/)?.[0] ?? '-0'
         const isTitle = key.startsWith('articleTitle')
 
-        if(!articles[`articleTitle-${articleId}`]){
+        if(!articles[`articleTitle${articleId}`]){
           articles[`articleTitle-${articleId}`] = {
             articleTitle: '',
             articleTextContent: []
@@ -60,7 +60,7 @@ const formatContent = (
         }else{
           articles[`articleTitle-${articleId}`].articleTextContent.push(value)
         }
-        
+
       } else if (key.startsWith('termsOfUse')) {
         termsOfUse.push(value);
       }
