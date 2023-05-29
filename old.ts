@@ -46,10 +46,21 @@ const formatContent = (
         key.startsWith('articleTextContent')
       ) {
         const articleId = key.match(/-\d+/)?.[0]?.slice(1)
-        articles[`articleTitle-${articleId}`] = {
-            ...articles[`articleTitle-${articleId}`],
-            [key.replace(/-.+/,'')]: value
+        const isTitle = key.startsWith('articleTitle')
+
+        if(!articles[`articleTitle-${articleId}`]){
+          articles[`articleTitle-${articleId}`] = {
+            articleTitle: '',
+            articleTextContent: []
+          }
         }
+
+        if(isTitle){
+          articles[`articleTitle-${articleId}`].articleTitle = value
+        }else{
+          articles[`articleTitle-${articleId}`].articleTextContent.push(value)
+        }
+        
       } else if (key.startsWith('termsOfUse')) {
         termsOfUse.push(value);
       }
