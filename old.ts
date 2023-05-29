@@ -29,63 +29,32 @@ const formatContent = (
       firstDefinition,
       firstSubtitle,
     } = content;
-    const articles: Article[] = [];
+    const articles: Record<string, Article> = {};
     const textContent: FormattedContent['content']['textContent'] = [];
     const considerations: FormattedContent['content']['considerations'] = [];
     const termsOfUse: FormattedContent['content']['termsOfUse'] = [];
-    const articleTextContentFiltered: string[] = [];
-  
+
     Object.keys(content).forEach((key) => {
+    const value = content[key as keyof AirTransportContractContent['content']]
       if (key.startsWith('considerations')) {
-        considerations.push(
-          content[key as keyof AirTransportContractContent['content']],
-        );
+        considerations.push(value);
       } else if (key.startsWith('textContent') && !key.includes('article')) {
-        textContent.push(
-          content[key as keyof AirTransportContractContent['content']],
-        );
-      } else if (
+        textContent.push(value);
+      }
+      else if (
         key.startsWith('articleTitle') ||
         key.startsWith('articleTextContent')
       ) {
-        articleTextContentFiltered.push(key);
+        const articleId = key.match(/-\d+/)?.[0]?.slice(1)
+        articles[`articleTitle-${articleId}`] = {
+            ...articles[`articleTitle-${articleId}`],
+            [key.replace(/-.+/,'')]: value
+        }
       } else if (key.startsWith('termsOfUse')) {
-        termsOfUse.push(
-          content[key as keyof AirTransportContractContent['content']],
-        );
+        termsOfUse.push(value);
       }
     });
   
-    const titleList = articleTextContentFiltered.filter((obj) =>
-      obj.includes('Title'),
-    );
-  
-    titleList.forEach((_, i) => {
-      const titleKey =
-        i === 0
-          ? 'articleTitle'
-          : (`articleTitle-${i}` as keyof AirTransportContractContent['content']);
-  
-      const text = (
-        i === 0
-          ? articleTextContentFiltered.filter((obj) =>
-              /(articleTextContent)$|((articleTextContent):?(Def-\d))/i.test(obj),
-            )
-          : articleTextContentFiltered.filter(
-              (obj) => !obj.indexOf(`articleTextContent-${i}`),
-            )
-      ).map(
-        (textKey) =>
-          content[textKey as keyof AirTransportContractContent['content']],
-      );
-  
-      const item: Article = {
-        articleTitle: content[titleKey],
-        articleTextContent: text,
-      };
-  
-      articles.push(item);
-    });
   
     return {
       id: contentRaw.id,
@@ -97,7 +66,7 @@ const formatContent = (
         firstDefinition,
         firstSubtitle,
         textContent,
-        articles,
+        articles: Object.values(articles),
         termsOfUse,
       },
     };
